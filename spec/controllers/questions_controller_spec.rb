@@ -5,12 +5,7 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'GET#index' do
     let(:questions) {create_list(:question, 3)}
-
     before { get :index }
-    it 'populates an array of all questions' do
-
-      expect(assigns(:questions)).to match_array(questions)
-    end
 
     it 'renders index view' do
       expect(response).to render_template :index
@@ -18,7 +13,6 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET#show' do
-
     before { get :show, params: { id: question}}
 
     it 'renders show view' do
@@ -35,7 +29,6 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET#edit' do
-
     before { get :edit, params: { id: question}}
 
     it 'renders edit view' do
@@ -53,7 +46,7 @@ RSpec.describe QuestionsController, type: :controller do
 
       it 'redirects to show view' do
         post :create, params: { question: attributes_for(:question)}
-        expect(response).to redirect_to assigns(:question)
+        expect(response).to redirect_to assigns(:exposed_question)
       end
     end
 
@@ -73,7 +66,7 @@ RSpec.describe QuestionsController, type: :controller do
     context 'with valid attributes' do
       it 'assigns the requested question to @question' do
         patch :update, params: { id: question, question: attributes_for(:question) }
-        expect(assigns(:question)).to eq question
+        expect(assigns(:exposed_question)).to eq question
       end
 
       it 'changes question attributes' do
