@@ -7,11 +7,6 @@ RSpec.describe AnswersController, type: :controller do
   describe 'GET#index' do
     let(:answers) { create_list :answer, 3, question: question}
     before { get :index, params: { question_id: question } }
-    before { get :index, params: { question_id: question } }
-
-    it 'assigns @answers' do
-      expect(assigns(:answers)).to match_array(answers)
-    end
 
     it 'renders index view' do
       expect(response).to render_template :index
@@ -21,10 +16,6 @@ RSpec.describe AnswersController, type: :controller do
   describe 'GET#show' do
     before { get :show, params: { id: answer}}
 
-    it 'assigns @answer' do
-      expect(assigns(:answer)).to eq answer
-    end
-
     it 'render show view' do
       expect(response).to render_template :show
     end
@@ -33,10 +24,6 @@ RSpec.describe AnswersController, type: :controller do
   describe 'GET#new' do
     before { get :new, params: { question_id: question} }
 
-    it 'assigns @answer' do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
-
     it 'renders new view' do
       expect(response).to render_template :new
     end
@@ -44,10 +31,6 @@ RSpec.describe AnswersController, type: :controller do
 
   describe 'GET#edit' do
     before { get :edit, params: { id: answer} }
-
-    it 'assigns @answer' do
-      expect(assigns(:answer)).to eq answer
-    end
 
     it 'render edit view' do
       expect(response).to render_template :edit
@@ -63,14 +46,14 @@ RSpec.describe AnswersController, type: :controller do
 
       it 'redirected to show view' do
         post :create, params: { question_id: question, answer: attributes_for(:answer)}
-        expect(response).to redirect_to assigns(:answer)
+        expect(response).to redirect_to assigns(:exposed_answer)
       end
     end
 
     context 'invalid attributes' do
       it 'does not save answer' do
-        count = question.answers.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)} }.to_not change(question.answers, :count)
+        count = Answer.count
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)} }.to_not change(Answer, :count)
       end
 
       it 're-renders new view' do
@@ -84,7 +67,7 @@ RSpec.describe AnswersController, type: :controller do
     context 'valid attributes' do
       it 'assigns @answer' do
         patch :update, params: { id: answer, answer: attributes_for(:answer) }
-        expect(assigns(:answer)).to eq answer
+        expect(assigns(:exposed_answer)).to eq answer
       end
 
       it 'change answer attributes' do
