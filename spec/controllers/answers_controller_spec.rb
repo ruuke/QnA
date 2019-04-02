@@ -3,11 +3,10 @@ require 'rails_helper'
 RSpec.describe AnswersController, type: :controller do
   let(:question) { create :question }
   let(:answer) { create :answer, question: question}
-  before { get :index, params: { question_id: question } }
 
   describe 'GET#index' do
     let(:answers) { create_list :answer, 3, question: question}
-
+    before { get :index, params: { question_id: question } }
     before { get :index, params: { question_id: question } }
 
     it 'assigns @answers' do
@@ -58,8 +57,8 @@ RSpec.describe AnswersController, type: :controller do
   describe 'POST#create' do
     context 'valid attributes' do
       it 'save new answer' do
-        count = Answer.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)} }.to change(Answer, :count).by(1)
+        count = question.answers.count
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)} }.to change(question.answers, :count).by(1)
       end
 
       it 'redirected to show view' do
@@ -70,8 +69,8 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'invalid attributes' do
       it 'does not save answer' do
-        count = Answer.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)} }.to_not change(Answer, :count)
+        count = question.answers.count
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)} }.to_not change(question.answers, :count)
       end
 
       it 're-renders new view' do
