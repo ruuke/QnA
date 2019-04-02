@@ -1,5 +1,4 @@
 class AnswersController < ApplicationController
-
   before_action :set_question, only: %i[index create]
   before_action :set_answer, only: %i[show edit update destroy]
 
@@ -55,5 +54,4 @@ class AnswersController < ApplicationController
   def answer_params
     params.require(:answer).permit(:body)
   end
-
 end

@@ -99,8 +99,6 @@ RSpec.describe AnswersController, type: :controller do
         patch :update, params: { id: answer, answer: attributes_for(:answer) }
         expect(response).to redirect_to answer
       end
-
-
     end
 
     context 'invalid attributes' do
@@ -115,6 +113,7 @@ RSpec.describe AnswersController, type: :controller do
         expect(response).to render_template :edit
       end
     end
+  end
 
   describe 'DELETE #destroy' do
     let!(:answer) {create :answer, question: question}
@@ -127,9 +126,4 @@ RSpec.describe AnswersController, type: :controller do
       expect(response).to redirect_to question_answers_path(answer.question)
     end
   end
-
-
-  end
-
-
 end
