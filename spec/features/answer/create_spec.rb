@@ -39,7 +39,4 @@ feature 'User can create answer', %q{
     expect(page).to have_content 'You need to sign in or sign up before continuing.'
   end
 end
-  # given!(:questions) { create_list(:question, 3) }
-      # visit questions_path
-      # find("a[href='/questions/#{questions.last.id}']").click
-      # save_and_open_page
+
