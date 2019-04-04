@@ -8,7 +8,7 @@ feature 'User can create answer', %q{
 
   given(:user) { create(:user) }
 
-  given(:question) { create(:question) }
+  given(:question) { create(:question, user: user) }
 
   describe 'Authenticated user' do
     background do

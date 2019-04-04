@@ -6,7 +6,7 @@ feature 'User can view question and answers to it', %q{
   I'd like to be able to view question and answers to it
 } do
   given(:user) { create(:user) }
-  given(:question) { create(:question) }
+  given(:question) { create(:question, user: user) }
 
   scenario 'Authenticate user review question and answers to it' do
     sign_in(user)
