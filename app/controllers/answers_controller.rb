@@ -1,15 +1,17 @@
 class AnswersController < ApplicationController
+  before_action :authenticate_user!, except: %i[index show]
+
+  expose :answer
   expose :question, -> { Question.find(params[:question_id]) }
   expose :answers, -> { question.answers }
-  expose :answer
 
   def create
     @exposed_answer = question.answers.new(answer_params)
 
     if answer.save
-      redirect_to answer
+      redirect_to question, notice: 'Your answer successfully created.'
     else
-      render :new
+      render 'questions/show'
     end
   end
 
