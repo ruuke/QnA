@@ -6,7 +6,7 @@ class AnswersController < ApplicationController
   expose :answers, -> { question.answers }
 
   def create
-    @exposed_answer = question.answers.new(answer_params)
+    @exposed_answer = question.answers.new(answer_params.merge( user_id: current_user.id))
 
     if answer.save
       redirect_to question, notice: 'Your answer successfully created.'
@@ -25,7 +25,7 @@ class AnswersController < ApplicationController
 
   def destroy
     answer.destroy
-    redirect_to question_answers_path(answer.question)
+    redirect_to question_answers_path(answer.question), notice: 'Answer successfully deleted.'
   end
 
   private
