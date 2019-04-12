@@ -5,23 +5,6 @@ RSpec.describe AnswersController, type: :controller do
   let(:question) { create :question, user: user }
   let(:answer) { create :answer, question: question, user: user }
 
-  describe 'GET#index' do
-    let(:answers) { create_list :answer, 3, question: question}
-    before { get :index, params: { question_id: question } }
-
-    it 'renders index view' do
-      expect(response).to render_template :index
-    end
-  end
-
-  describe 'GET#show' do
-    before { get :show, params: { id: answer}}
-
-    it 'render show view' do
-      expect(response).to render_template :show
-    end
-  end
-
   describe 'GET#new' do
     before { login(user) }
 
@@ -110,13 +93,24 @@ RSpec.describe AnswersController, type: :controller do
     before { login(user) }
 
     let!(:answer) {create :answer, question: question, user: user }
-    it 'delete the answer' do
-      expect { delete :destroy, params: { id: answer }}.to change(Answer, :count).by(-1)
+    let!(:other_user) { create(:user) }
+    let!(:other_answer) {create :answer, question: question, user: other_user }
+
+    context 'User tries to' do
+      it 'delete own answer' do
+        expect { delete :destroy, params: { id: answer }}.to change(Answer, :count).by(-1)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to question_path(answer.question)
+      end
     end
 
-    it 'redirect to index view' do
-      delete :destroy, params: { id: answer }
-      expect(response).to redirect_to question_answers_path(answer.question)
+    context 'User tries to' do
+      it 'delete anothers answer' do
+        expect { delete :destroy, params: { id: other_answer }}.to_not change(Answer, :count)
+      end
     end
   end
 end

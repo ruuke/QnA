@@ -3,6 +3,7 @@ class QuestionsController < ApplicationController
 
   expose :questions, -> { Question.all }
   expose :question
+  expose :answer, -> { Answer.new }
 
   def create
     @exposed_question = current_user.questions.new(question_params)
@@ -23,8 +24,10 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    question.destroy
-    redirect_to questions_path, notice: 'Question successfully deleted.'
+    if current_user.author?(question)
+      question.destroy
+      redirect_to questions_path, notice: 'Question successfully deleted.'
+    end
   end
 
 

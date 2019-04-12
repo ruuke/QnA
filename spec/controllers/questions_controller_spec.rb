@@ -34,7 +34,7 @@ RSpec.describe QuestionsController, type: :controller do
   describe 'GET#edit' do
     before { login(user) }
 
-    before { get :edit, params: { id: question}}
+    before { get :edit, params: { id: question} }
 
     it 'renders edit view' do
       expect(response).to render_template :edit
@@ -113,13 +113,24 @@ RSpec.describe QuestionsController, type: :controller do
 
     let!(:question) { create(:question, user: user) }
 
-    it 'deletes the question' do
-       expect{ delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+    let!(:other_user) { create(:user) }
+    let!(:other_question) { create(:question, user: other_user) }
+
+    context 'User tries to' do
+      it 'delete own question' do
+         expect{ delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+      end
+
+      it 'redirects to index' do
+        delete :destroy, params: { id: question }
+        expect(response).to redirect_to questions_path
+      end
     end
 
-    it 'redirects to index' do
-      delete :destroy, params: { id: question }
-      expect(response).to redirect_to questions_path
+    context 'User tries to' do
+      it 'delete anothers question' do
+         expect{ delete :destroy, params: { id: other_question } }.to_not change(Question, :count)
+      end
     end
   end
 end

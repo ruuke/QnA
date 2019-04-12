@@ -1,9 +1,8 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, except: %i[index show]
+  before_action :authenticate_user!
 
   expose :answer
   expose :question, -> { Question.find(params[:question_id]) }
-  expose :answers, -> { question.answers }
 
   def create
     @exposed_answer = question.answers.new(answer_params.merge( user_id: current_user.id))
@@ -24,8 +23,10 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    answer.destroy
-    redirect_to question_answers_path(answer.question), notice: 'Answer successfully deleted.'
+    if current_user.author?(answer)
+      answer.destroy
+      redirect_to question_path(answer.question), notice: 'Answer successfully deleted.'
+    end
   end
 
   private
