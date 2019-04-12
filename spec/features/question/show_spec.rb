@@ -7,7 +7,9 @@ feature 'User can view question and answers to it', %q{
 } do
   given(:user) { create(:user) }
   given!(:question) { create(:question, user: user) }
-  given!(:answer) { create(:answer, question: question, user: user) }
+  given!(:answer1) { create(:answer, body: 'a1', question: question, user: user) }
+  given!(:answer2) { create(:answer, body: 'a2', question: question, user: user) }
+
 
   scenario 'Authenticate user review question and answers to it' do
     sign_in(user)
@@ -15,17 +17,17 @@ feature 'User can view question and answers to it', %q{
     visit question_path(question)
 
     expect(page).to have_content "#{question.title}"
-    expect(page).to have_content "#{question.title}"
-    expect(page).to have_content "#{answer.body}"
-    expect(page).to have_content "Answers"
+    expect(page).to have_content "#{question.body}"
+    expect(page).to have_content "#{answer1.body}"
+    expect(page).to have_content "#{answer2.body}"
   end
 
   scenario 'Unauthenticate user review question and answers to it' do
     visit question_path(question)
 
     expect(page).to have_content "#{question.title}"
-    expect(page).to have_content "#{question.title}"
-    expect(page).to have_content "#{answer.body}"
-    expect(page).to have_content "Answers"
+    expect(page).to have_content "#{question.body}"
+    expect(page).to have_content "#{answer1.body}"
+    expect(page).to have_content "#{answer2.body}"
   end
 end

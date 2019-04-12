@@ -16,7 +16,7 @@ feature 'User can view questions list', %q{
   scenario 'Authenticate user can view questions list' do
     sign_in(user)
 
-    expect(page).to have_content 'Questions list'
+
     expect(page).to have_content "#{question1.title}"
     expect(page).to have_content "#{question2.title}"
     expect(page).to have_content "#{question1.body}"
@@ -24,7 +24,7 @@ feature 'User can view questions list', %q{
   end
 
   scenario 'Unauthenticate user can view questions list' do
-    expect(page).to have_content 'Questions list'
+
     expect(page).to have_content "#{question1.title}"
     expect(page).to have_content "#{question2.title}"
     expect(page).to have_content "#{question1.body}"

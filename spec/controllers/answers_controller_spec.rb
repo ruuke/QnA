@@ -31,11 +31,11 @@ RSpec.describe AnswersController, type: :controller do
     context 'valid attributes' do
       it 'save new answer' do
         count = question.answers.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)} }.to change(question.answers, :count).by(1)
+        expect { post :create, params: { question_id: question, user: user, answer: attributes_for(:answer)} }.to change(question.answers, :count).by(1)
       end
 
       it 'redirected to show questions index view' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer)}
+        post :create, params: { question_id: question, user: user, answer: attributes_for(:answer)}
         expect(response).to redirect_to question_path(question)
       end
     end
@@ -43,11 +43,11 @@ RSpec.describe AnswersController, type: :controller do
     context 'invalid attributes' do
       it 'does not save answer' do
         count = Answer.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)} }.to_not change(Answer, :count)
+        expect { post :create, params: { question_id: question, user: user, answer: attributes_for(:answer, :invalid)} }.to_not change(Answer, :count)
       end
 
       it 're-renders new view' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }
+        post :create, params: { question_id: question, user: user, answer: attributes_for(:answer, :invalid) }
         expect(response).to render_template 'questions/show'
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe AnswersController, type: :controller do
 
       it 'does not change question' do
         answer.reload
-        expect(answer.body).to eq "MyText"
+        expect(answer.body).to eq "MyAnswerText"
       end
 
       it 're-render edit view' do
@@ -110,6 +110,11 @@ RSpec.describe AnswersController, type: :controller do
     context 'User tries to' do
       it 'delete anothers answer' do
         expect { delete :destroy, params: { id: other_answer }}.to_not change(Answer, :count)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to question_path(answer.question)
       end
     end
   end

@@ -10,7 +10,7 @@ feature 'User can sign out', %q{
   scenario 'Authenticated user tries to sign out' do
     sign_in(user)
 
-    visit destroy_user_session_path
+    click_on 'Log Out'
 
     expect(page).to have_content 'Signed out successfully.'
   end
