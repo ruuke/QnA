@@ -16,18 +16,18 @@ feature 'User can view question and answers to it', %q{
 
     visit question_path(question)
 
-    expect(page).to have_content "#{question.title}"
-    expect(page).to have_content "#{question.body}"
-    expect(page).to have_content "#{answer1.body}"
-    expect(page).to have_content "#{answer2.body}"
+    expect(page).to have_content question.title
+    expect(page).to have_content question.body
+    expect(page).to have_content answer1.body
+    expect(page).to have_content answer2.body
   end
 
   scenario 'Unauthenticate user review question and answers to it' do
     visit question_path(question)
 
-    expect(page).to have_content "#{question.title}"
-    expect(page).to have_content "#{question.body}"
-    expect(page).to have_content "#{answer1.body}"
-    expect(page).to have_content "#{answer2.body}"
+    expect(page).to have_content question.title
+    expect(page).to have_content question.body
+    expect(page).to have_content answer1.body
+    expect(page).to have_content answer2.body
   end
 end
