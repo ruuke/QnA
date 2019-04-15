@@ -6,8 +6,7 @@ feature 'User can view questions list', %q{
   I want to be able to view questions list
 } do
   given(:user) { create(:user) }
-  given!(:question1) { create(:question, user: user) }
-  given!(:question2) { create(:question, user: user) }
+  given!(:questions) { create_list(:question, 3, user: user) }
 
   background do
     visit questions_path
@@ -16,18 +15,17 @@ feature 'User can view questions list', %q{
   scenario 'Authenticate user can view questions list' do
     sign_in(user)
 
-
-    expect(page).to have_content "#{question1.title}"
-    expect(page).to have_content "#{question2.title}"
-    expect(page).to have_content "#{question1.body}"
-    expect(page).to have_content "#{question2.body}"
+    questions.each do |question|
+      expect(page).to have_content question.title
+      expect(page).to have_content question.body
+    end
   end
 
   scenario 'Unauthenticate user can view questions list' do
 
-    expect(page).to have_content "#{question1.title}"
-    expect(page).to have_content "#{question2.title}"
-    expect(page).to have_content "#{question1.body}"
-    expect(page).to have_content "#{question2.body}"
+    questions.each do |question|
+      expect(page).to have_content question.title
+      expect(page).to have_content question.body
+    end
   end
 end
