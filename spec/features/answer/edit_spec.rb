@@ -10,6 +10,9 @@ feature 'User can edit own answer', %q{
     given(:question) { create :question, user: user }
     given!(:answer) { create :answer, question: question, user: user }
 
+    given!(:other_user) { create(:user) }
+    given!(:other_answer) { create(:answer, question: question, user: other_user) }
+
   scenario 'Unauthenticated user can not edit answer' do
     visit question_path(question)
 
@@ -17,13 +20,15 @@ feature 'User can edit own answer', %q{
   end
 
   describe 'Authenticated user', js: true do
-    scenario 'edits own answer' do
+    background do
       sign_in user
 
       visit question_path(question)
-      click_on 'Edit'
+    end
 
-      within '.answers' do
+    scenario 'edits own answer' do
+      within "#answer_#{answer.id}" do
+        click_on 'Edit'
         fill_in 'Your answer', with: 'edited answer'
         click_on 'Save'
 
@@ -33,8 +38,21 @@ feature 'User can edit own answer', %q{
       end
     end
 
+    scenario 'edits his answer with errors' do
+      within "#answer_#{answer.id}" do
+        click_on 'Edit'
+        fill_in 'Your answer', with: ''
+        click_on 'Save'
 
-    scenario 'edits own answer with errors'
-    scenario "tries to edit other users's question"
+        expect(page).to have_content answer.body
+      end
+      expect(page).to have_content "Body can't be blank"
+    end
+
+    scenario "tries to edit other user's answer" do
+      within "#answer_#{other_answer.id}" do
+        expect(page).to_not have_link 'Edit'
+      end
+    end
   end
 end
