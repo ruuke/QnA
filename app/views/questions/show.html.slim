@@ -6,7 +6,7 @@ p= question.body
     data: { confirm: 'Are you sure?' }
 
 .answers
-  = render question.answers
+  = render question.answers.sort_by_best
 
 h2 Add an answers
 = render 'answers/form'
