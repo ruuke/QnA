@@ -38,6 +38,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'slim-rails'
 gem 'decent_exposure', '3.0.0'
 gem 'devise'
+gem "twitter-bootstrap-rails"
+gem 'jquery-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -64,6 +66,7 @@ group :test do
   gem 'shoulda-matchers'
   gem 'rails-controller-testing'
   gem 'launchy'
+  gem 'geckodriver-helper'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

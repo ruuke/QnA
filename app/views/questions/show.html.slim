@@ -5,8 +5,8 @@ p= question.body
     method: :delete,
     data: { confirm: 'Are you sure?' }
 
-h2 Answers
-= render question.answers
+.answers
+  = render question.answers
 
 h2 Add an answers
 = render 'answers/form'

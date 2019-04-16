@@ -31,24 +31,24 @@ RSpec.describe AnswersController, type: :controller do
     context 'valid attributes' do
       it 'save new answer' do
         count = question.answers.where(user: user).count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)} }.to change(question.answers.where(user: user), :count).by(1)
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)}, format: :js }.to change(question.answers.where(user: user), :count).by(1)
       end
 
-      it 'redirected to show questions index view' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer)}
-        expect(response).to redirect_to question_path(question)
+      it 'renders create template' do
+        post :create, params: { question_id: question, answer: attributes_for(:answer), format: :js }
+        expect(response).to render_template :create
       end
     end
 
     context 'invalid attributes' do
       it 'does not save answer' do
         count = Answer.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)} }.to_not change(Answer, :count)
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid)}, format: :js }.to_not change(Answer, :count)
       end
 
-      it 're-renders new view' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }
-        expect(response).to render_template 'questions/show'
+      it 'renders create template' do
+        post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid), format: :js }
+        expect(response).to render_template :create
       end
     end
   end
@@ -57,34 +57,35 @@ RSpec.describe AnswersController, type: :controller do
     before { login(user) }
 
     context 'valid attributes' do
-      it 'assigns @answer' do
-        patch :update, params: { id: answer, answer: attributes_for(:answer) }
+      it 'assigns answer' do
+        patch :update, params: { id: answer, answer: attributes_for(:answer), format: :js }
         expect(assigns(:exposed_answer)).to eq answer
       end
 
       it 'change answer attributes' do
-        patch :update, params: { id: answer, answer: { body: 'new body'} }
+        patch :update, params: { id: answer, answer: { body: 'new body'}, format: :js  }
         answer.reload
 
         expect(answer.body).to eq 'new body'
       end
 
       it 'redirected to updated answer' do
-        patch :update, params: { id: answer, answer: attributes_for(:answer) }
+        patch :update, params: { id: answer, answer: attributes_for(:answer), format: :js  }
         expect(response).to redirect_to answer
       end
     end
 
     context 'invalid attributes' do
-      before { patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid) } }
+      before { patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid) }, format: :js }
 
       it 'does not change question' do
         answer.reload
         expect(answer.body).to eq "MyAnswerText"
       end
 
-      it 're-render edit view' do
-        expect(response).to render_template :edit
+      it 'renders update template' do
+        patch :update, params: { id: answer, answer: attributes_for(:answer, :invalid) }, format: :js
+        expect(response).to render_template :update
       end
     end
   end
