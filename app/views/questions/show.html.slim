@@ -5,8 +5,11 @@ p= question.body
     method: :delete,
     data: { confirm: 'Are you sure?' }
 
-h2 Answers
-= render question.answers
+.answers
+  = render question.answers.sort_by_best
 
 h2 Add an answers
 = render 'answers/form'
+
+br
+  = link_to 'Back', questions_path

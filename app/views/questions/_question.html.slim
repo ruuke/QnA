@@ -1,0 +1,15 @@
+div id = "question_#{question.id}"
+  tr
+    td= question.title
+    td= question.body
+    td= link_to 'Show', question_path(question)
+    - if current_user&.author?(question)
+      td= link_to 'Edit', '#', class: 'edit-question-link', data: {question_id: question.id}
+      td= link_to 'Delete', question, method: :delete
+
+  = form_with model: question, class: 'hidden', html: {id: "edit-question-#{question.id}"} do |f|
+    = f.label :title, 'Your question'
+    = f.text_field :title
+    = f.label :body
+    = f.text_area :body
+    = f.submit 'Save'
