@@ -10,7 +10,7 @@ class AnswersController < ApplicationController
 
   def update
     answer.update(answer_params) if current_user.author?(answer)
-    @question = answer.question
+    @exposed_question = answer.question
   end
 
   def destroy

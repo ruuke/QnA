@@ -9,7 +9,7 @@ feature 'User can edit own question', %q{
   given!(:question) { create(:question, user: user) }
 
   given!(:other_user) { create(:user) }
-  given!(:other_question) { create(:question, user: other_user) }
+  given(:other_question) { create(:question, user: other_user) }
 
   scenario 'Unauthenticated user can not edit question' do
     visit questions_path
