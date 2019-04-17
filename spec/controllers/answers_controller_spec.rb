@@ -1,27 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  let(:question) { create :question }
-  let(:answer) { create :answer, question: question}
-
-  describe 'GET#index' do
-    let(:answers) { create_list :answer, 3, question: question}
-    before { get :index, params: { question_id: question } }
-
-    it 'renders index view' do
-      expect(response).to render_template :index
-    end
-  end
-
-  describe 'GET#show' do
-    before { get :show, params: { id: answer}}
-
-    it 'render show view' do
-      expect(response).to render_template :show
-    end
-  end
+  let(:user) { create(:user) }
+  let(:question) { create :question, user: user }
+  let(:answer) { create :answer, question: question, user: user }
 
   describe 'GET#new' do
+    before { login(user) }
+
     before { get :new, params: { question_id: question} }
 
     it 'renders new view' do
@@ -30,6 +16,8 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'GET#edit' do
+    before { login(user) }
+
     before { get :edit, params: { id: answer} }
 
     it 'render edit view' do
@@ -38,15 +26,17 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'POST#create' do
+    before { login(user) }
+
     context 'valid attributes' do
       it 'save new answer' do
-        count = question.answers.count
-        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)} }.to change(question.answers, :count).by(1)
+        count = question.answers.where(user: user).count
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer)} }.to change(question.answers.where(user: user), :count).by(1)
       end
 
-      it 'redirected to show view' do
+      it 'redirected to show questions index view' do
         post :create, params: { question_id: question, answer: attributes_for(:answer)}
-        expect(response).to redirect_to assigns(:exposed_answer)
+        expect(response).to redirect_to question_path(question)
       end
     end
 
@@ -58,12 +48,14 @@ RSpec.describe AnswersController, type: :controller do
 
       it 're-renders new view' do
         post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }
-        expect(response).to render_template :new
+        expect(response).to render_template 'questions/show'
       end
     end
   end
 
   describe 'PATCH#update' do
+    before { login(user) }
+
     context 'valid attributes' do
       it 'assigns @answer' do
         patch :update, params: { id: answer, answer: attributes_for(:answer) }
@@ -88,7 +80,7 @@ RSpec.describe AnswersController, type: :controller do
 
       it 'does not change question' do
         answer.reload
-        expect(answer.body).to eq "MyText"
+        expect(answer.body).to eq "MyAnswerText"
       end
 
       it 're-render edit view' do
@@ -98,14 +90,32 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let!(:answer) {create :answer, question: question}
-    it 'delete the answer' do
-      expect { delete :destroy, params: { id: answer }}.to change(Answer, :count).by(-1)
+    before { login(user) }
+
+    let!(:answer) {create :answer, question: question, user: user }
+    let!(:other_user) { create(:user) }
+    let!(:other_answer) {create :answer, question: question, user: other_user }
+
+    context 'User tries to' do
+      it 'delete own answer' do
+        expect { delete :destroy, params: { id: answer }}.to change(Answer, :count).by(-1)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to question_path(answer.question)
+      end
     end
 
-    it 'redirect to index view' do
-      delete :destroy, params: { id: answer }
-      expect(response).to redirect_to question_answers_path(answer.question)
+    context 'User tries to' do
+      it 'delete anothers answer' do
+        expect { delete :destroy, params: { id: other_answer }}.to_not change(Answer, :count)
+      end
+
+      it 'redirect to index view' do
+        delete :destroy, params: { id: answer }
+        expect(response).to redirect_to question_path(answer.question)
+      end
     end
   end
 end

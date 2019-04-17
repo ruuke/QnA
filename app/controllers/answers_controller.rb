@@ -1,15 +1,16 @@
 class AnswersController < ApplicationController
-  expose :question, -> { Question.find(params[:question_id]) }
-  expose :answers, -> { question.answers }
+  before_action :authenticate_user!
+
   expose :answer
+  expose :question, -> { Question.find(params[:question_id]) }
 
   def create
-    @exposed_answer = question.answers.new(answer_params)
+    @exposed_answer = question.answers.new(answer_params.merge( user_id: current_user.id))
 
     if answer.save
-      redirect_to answer
+      redirect_to question, notice: 'Your answer successfully created.'
     else
-      render :new
+      render 'questions/show'
     end
   end
 
@@ -22,8 +23,12 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    answer.destroy
-    redirect_to question_answers_path(answer.question)
+    if current_user.author?(answer)
+      answer.destroy
+      redirect_to question_path(answer.question), notice: 'Answer successfully deleted.'
+    else
+      redirect_to question_path(answer.question), notice: 'You have no rigths to delete this answer.'
+    end
   end
 
   private
